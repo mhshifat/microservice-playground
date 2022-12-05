@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-app-web
+  template:
+    metadata:
+      labels:
+        app: ticketing-app-web
+    spec:
+      containers:
+      - name: ticketing-app-web
+        image: mhshifat/ticketing-app-web
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: ticketing-app-web
+  ports:
+  - name: web
+    protocol: TCP
+    port: 3000
+    targetPort: 3000

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-app-auth
+  template:
+    metadata:
+      labels:
+        app: ticketing-app-auth
+    spec:
+      containers:
+      - name: ticketing-app-auth
+        image: mhshifat/ticketing-app-auth
+        env:
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: general-secret
+                key: JWT_SECRET
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: ticketing-app-auth
+  ports:
+  - name: auth
+    protocol: TCP
+    port: 8000
+    targetPort: 8000

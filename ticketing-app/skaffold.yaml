@@ -1,0 +1,52 @@
+apiVersion: skaffold/v3
+kind: Config
+metadata:
+  name: ticketing-app
+build:
+  local:
+    push: false
+  artifacts:
+  - image: mhshifat/ticketing-app-web
+    context: web
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+        - dest: .
+          src: "src/**/*.{ts,tsx}"
+  - image: mhshifat/ticketing-app-auth
+    context: auth
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+        - dest: .
+          src: "src/**/*.ts"
+  - image: mhshifat/ticketing-app-tickets
+    context: tickets
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+        - dest: .
+          src: "src/**/*.ts"
+  - image: mhshifat/ticketing-app-orders
+    context: orders
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+        - dest: .
+          src: "src/**/*.ts"
+manifests:
+  rawYaml:
+  - k8s/secret.yml
+  - k8s/nats-depl.yml
+  - k8s/web-depl.yml
+  - k8s/auth-depl.yml
+  - k8s/auth-mongo-depl.yml
+  - k8s/tickets-depl.yml
+  - k8s/tickets-mongo-depl.yml
+  - k8s/orders-depl.yml
+  - k8s/orders-mongo-depl.yml
+  - k8s/ingress-srv.yml

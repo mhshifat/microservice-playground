@@ -1,0 +1,29 @@
+apiVersion: skaffold/v3
+kind: Config
+metadata:
+  name: kubernaties-playground
+build:
+  local:
+    push: false
+  artifacts:
+  - image: mhshifat/kubernaties-playground-posts-service
+    context: posts-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+        - dest: .
+          src: "*.js"
+  - image: mhshifat/kubernaties-playground-web
+    context: web
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+        - dest: .
+          src: "src/**/*.js"
+manifests:
+  rawYaml:
+  - k8s/ingress-srv.yml
+  - k8s/posts-depl.yml
+  - k8s/web-depl.yml

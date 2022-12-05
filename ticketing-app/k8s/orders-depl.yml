@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-app-orders
+  template:
+    metadata:
+      labels:
+        app: ticketing-app-orders
+    spec:
+      containers:
+      - name: ticketing-app-orders
+        image: mhshifat/ticketing-app-orders
+        env:
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: general-secret
+                key: JWT_SECRET
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: ticketing-app-orders
+  ports:
+  - name: orders
+    protocol: TCP
+    port: 8002
+    targetPort: 8002
